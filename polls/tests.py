@@ -4,7 +4,9 @@ from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
 
-from .models import Question
+from .models import Question, Choice
+from .factories import QuestionFactory, ChoiceFactory
+import factory.random
 
 from django.contrib.auth.models import User
 from snapshottest.django import TestCase as SnapshotTestCase
@@ -18,12 +20,35 @@ class SnapshotTests(SnapshotTestCase):
         user = User.objects.create(username=self.username)
         user.set_password(self.password)
         user.save()
+        factory.random.reseed_random(42)
 
-    def test_choices_list(self):
+    def test_choices_list_zero(self):
         """Snapshot test for GET /api/choices/"""
         self.client.login(username=self.username, password=self.password)
         response = self.client.get("/api/choices/")
-        print(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertMatchSnapshot(json.loads(response.content))
+
+    def test_choices_list_one(self):
+        """Snapshot test for GET /api/choices/"""
+
+        ChoiceFactory.create()
+
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get("/api/choices/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertMatchSnapshot(json.loads(response.content))
+
+    def test_choices_list_two(self):
+        """Snapshot test for GET /api/choices/"""
+
+        ChoiceFactory.create_batch(2)
+
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get("/api/choices/")
+
         self.assertEqual(response.status_code, 200)
         self.assertMatchSnapshot(json.loads(response.content))
 
