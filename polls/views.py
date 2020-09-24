@@ -33,7 +33,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     API endpoint that allows groups to be viewed or edited.
     """
 
-    queryset = Group.objects.all()
+    queryset = Group.objects.all().order_by("-id")
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -43,7 +43,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     API endpoint that allows questions to be viewed or edited.
     """
 
-    queryset = Question.objects.all()
+    queryset = Question.objects.all().order_by("-id")
     serializer_class = QuestionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -53,7 +53,7 @@ class ChoiceViewSet(viewsets.ModelViewSet):
     API endpoint that allows choices to be viewed or edited.
     """
 
-    queryset = Choice.objects.all()
+    queryset = Choice.objects.all().order_by("-id")
     serializer_class = ChoiceSerializer
     permission_classes = [permissions.IsAuthenticated]
 

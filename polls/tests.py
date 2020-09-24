@@ -6,6 +6,27 @@ from django.urls import reverse
 
 from .models import Question
 
+from django.contrib.auth.models import User
+from snapshottest.django import TestCase as SnapshotTestCase
+import json
+
+
+class SnapshotTests(SnapshotTestCase):
+    def setUp(self):
+        self.username = "test_user"
+        self.password = "test_password"
+        user = User.objects.create(username=self.username)
+        user.set_password(self.password)
+        user.save()
+
+    def test_choices_list(self):
+        """Snapshot test for GET /api/choices/"""
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get("/api/choices/")
+        print(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertMatchSnapshot(json.loads(response.content))
+
 
 class QuestionModelTests(TestCase):
     def test_was_published_recently_with_future_question(self):
